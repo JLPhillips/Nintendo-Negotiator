@@ -1,25 +1,26 @@
 require 'rubygems'
 require 'highline/import'
 require_relative "menu"
+require_relative "ascii"
 
 class PersonalGame
   def self.new
     personalGame = {}
-
-    personalGame[:title] = ask("\nTitle?", String)
-
-    puts "\nConsole or Handheld?"
+    Ascii.addGame()
+    puts "\nConsole, Handheld, or Virtual Boy?"
     choose do |menu|
-      menu.choices("Console", "Handheld") do |chosen|
+      menu.choices("Console", "Handheld", "Virtual Boy") do |chosen|
         system = chosen
         puts "\n"
         if system == "Console"
           puts "Which one?"
           choose do |menu|
-            menu.choices("NES", "SNES", "N64", "GCN", "Wii", "Wii U") do |chosen|
+            menu.choices("NES", "SNES", "Virtual Boy", "Nintendo 64", "Gamecube", "Wii", "Wii U") do |chosen|
               personalGame[:platform] = chosen
             end
           end
+        elsif system == "Virtual Boy"
+          personalGame[:platform] = chosen
         else
           puts "Which one?"
           choose do |menu|
@@ -30,6 +31,8 @@ class PersonalGame
         end
       end
     end
+
+    personalGame[:title] = ask("\nTitle?", String)
 
     puts "\nCurrent condition?"
     choose do |menu|
@@ -44,7 +47,7 @@ class PersonalGame
     choose do |menu|
       menu.choice("Save Game") { save(personalGame) }
       menu.choice("Start Over") { new() }
-      menu.choice("Go to Main Menu") { Menu.top() }
+      menu.choice("Go to Main Menu") { Menu.regular() }
       menu.choice("Exit") { exit }
     end
   end
@@ -53,9 +56,9 @@ class PersonalGame
     #SQL code (to add personalGame to the personalGames table) goes here.
     personalGames = Array.new
     personalGames << personalGame
-    puts "\nSTART"
-    puts personalGames
-    puts "END\n"
-    Menu.regular()
+    puts "\n
+    Successfully added #{personalGame[:title]} (#{personalGame[:platform]})
+    in #{personalGame[:condition]} condition for $#{personalGame[:purchasePrice]}!"
+    Menu.done()
   end
 end
