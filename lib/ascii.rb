@@ -77,7 +77,7 @@ class Ascii
 
   end
 
-  def self.aboutPsp
+  def self.about
     aboutLogo()
     puts "
           ----------------------------------------------
@@ -97,50 +97,9 @@ class Ascii
          -----------<MADE BY JL PHILLIPS 2014>-----------
           ----------------------------------------------\n"
     choose do |menu|
-      menu.choice("Enter 1 to go back to main menu.") { Menu.regular() }
+      menu.choice("Go Back To Main Menu") { Menu.regular() }
+      menu.choice("Exit") { Menu.superExit() }
     end
-  end
-
-  def self.aboutBlock
-    puts "
-  ----------------------------------------------------------------------
-  -----------------NOW YOU'RE NEGOTIATING WITH POWER--------------------
-  ----------------------------------------------------------------------
-  -----------   Nintendo Negotiator is a used and            -----------
-  -----------   buyback price database for all Nintendo      -----------
-  -----------   games released in the USA for all Nintendo   -----------
-  -----------   game systems, whether handheld or console    -----------
-  -----------   (or whatever you count Virtual Boy as) for   -----------
-  -----------   use of determining personal collection sell  -----------
-  -----------   value. It allows you to quickly add your     -----------
-  -----------   games along with what you paid for them and  -----------
-  -----------   then get special reports on your collection! -----------
-  -----------   Navigate the menus and have some fun!        -----------
-  ----------------------------------------------------------------------
-  ----------------------MADE BY JL PHILLIPS 2014------------------------
-  ----------------------------------------------------------------------"
-    Menu.regular()
-  end
-
-  def self.aboutSquiggle
-    puts "
-     ---------------------------------------------------------------
-    -------------<NOW YOU'RE NEGOTIATING WITH POWER>-----------------
-   -------------------------------------------------------------------
-  -----------  >>>>>>>Nintendo Negotiator is a used and     -----------
-   ----------  buyback price database for all Nintendo      ----------
-    ---------  games released in the USA for all Nintendo   ---------
-     --------  game systems, whether handheld or console    --------
-      -------  (or whatever you count Virtual Boy as) for   -------
-      -------  use of determining personal collection sell  -------
-     --------  value. It allows you to quickly add your     --------
-    ---------  games along with what you paid for them and  ---------
-   ----------  then get special reports on your collection! ----------
-  -----------  Navigate the menus and have some fun!>>>>>>> -----------
-   -------------------------------------------------------------------
-    ------------------<MADE BY JL PHILLIPS 2014>---------------------
-     ---------------------------------------------------------------"
-    Menu.regular()
   end
 
   def self.addGame
