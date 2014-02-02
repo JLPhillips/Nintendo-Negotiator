@@ -17,6 +17,8 @@ class Importer
       developer: row_hash["developer"],
       publisher: row_hash["publisher"],
       releaseYear: row_hash["releaseYear"].to_i,
+      buybackPrice: row_hash["buybackPrice"].to_i,
+      ebayPrice: row_hash["ebayPrice"].to_i,
       originalPrice: row_hash["originalPrice"].to_i
     )
   end

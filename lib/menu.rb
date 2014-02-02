@@ -16,9 +16,9 @@ class Menu
     puts "\s\s------------------------------------------------"
     puts "\nWhat would you like to do?"
     choose do |menu|
-      menu.choice("Add a Game") { PersonalGame.new() }
-      menu.choice("See Your Collection") { Collection.showCollection() }
-      menu.choice("Edit Your Collection") { Collection.editCollection() }
+      menu.choice("Add a Game") { personalGame() }
+      menu.choice("See Your Collection") { showCollection() }
+      menu.choice("Edit Your Collection") { editCollection() }
       menu.choice("What is Nintendo Negotiator?") { Ascii.about() }
       menu.choice("Exit") { superExit() }
     end
@@ -27,9 +27,10 @@ class Menu
   def self.done
     puts "\n\nNow, what would you like to do?"
     choose do |menu|
-      menu.choice("Add a Game") { PersonalGame.new() }
-      menu.choice("See Your Collection") { Collection.showCollection() }
-      menu.choice("Edit Your Collection") { Collection.editCollection() }
+      menu.choice("Add a Game") { personalGame() }
+      menu.choice("See Your Collection") { showCollection() }
+      menu.choice("Edit Your Collection") { editCollection() }
+      menu.choice("What is Nintendo Negotiator?") { Ascii.about() }
       menu.choice("Exit") { superExit() }
     end
   end
@@ -40,9 +41,10 @@ class Menu
     puts "---------------------------------------------------"
     puts "\nWhat would you like to do?"
     choose do |menu|
-      menu.choice("Add a Game") { PersonalGame.new() }
-      menu.choice("See Your Collection") { Collection.showCollection() }
-      menu.choice("Edit Your Collection") { Collection.editCollection() }
+      menu.choice("Add a Game") { personalGame() }
+      menu.choice("See Your Collection") { showCollection() }
+      menu.choice("Edit Your Collection") { editCollection() }
+      menu.choice("What is Nintendo Negotiator?") { Ascii.about() }
       menu.choice("Exit") { superExit() }
     end
   end
@@ -78,14 +80,6 @@ class Menu
     end
 
     personalGame[:title] = ask("\nTitle? (Don't use any apostrophes!)", String)
-
-
-    # puts "\nCurrent condition?"
-    # choose do |menu|
-    #   menu.choices("New", "Like New", "Very Good", "Good", "Acceptable", "Poor") do |chosen|
-    #     personalGame[:condition] = chosen
-    #   end
-    # end
 
     personalGame[:purchasePrice] = ask("\nPrice you paid for it?", Integer)
     puts "\n"
@@ -128,34 +122,43 @@ class Menu
     choose do |menu|
       menu.choice("Console"){ searchConsoleGames() }
       menu.choice("Handheld"){ searchHandheldGames() }
-      menu.choice("Virtual Boy"){ Collection.byPlatform("Virtual Boy") }
+      menu.choice("Virtual Boy"){ searchVirtualBoy() }
     end
   end
 
   def self.searchConsoleGames
-    puts "Which one?"
+    puts "\nWhich one?"
     choose do |menu|
       menu.choices("NES", "SNES", "Nintendo 64", "Gamecube", "Wii", "Wii U") do |chosen|
-        Collection.byPlatform(chosen)
+        searchQuery = {}
+        searchQuery[:query] = chosen
+        Collection.byPlatform(searchQuery)
       end
     end
   end
 
   def self.searchHandheldGames
-    puts "Which one?"
+    puts "\nWhich one?"
     choose do |menu|
       menu.choices("Gameboy", "GBA", "DS", "3DS") do |chosen|
-        Collection.byPlatform(chosen)
+        searchQuery = {}
+        searchQuery[:query] = chosen
+        Collection.byPlatform(searchQuery)
       end
     end
+  end
+
+  def self.searchVirtualBoy
+    searchQuery = {:query=>"Virtual Boy"}
+    Collection.byPlatform(searchQuery)
   end
 
   def self.editCollection
     Ascii.editCollection()
     puts "\nHow would you like to edit your collection?"
     choose do |menu|
-      menu.choice("Edit a Game") { Collection.deleteGame() }
-      menu.choice("Delete a Game") { Collection.editGame() }
+      menu.choice("Edit a Game") { Collection.editGame() }
+      menu.choice("Delete a Game") { Collection.deleteGame() }
       menu.choice("Back to Main Menu") { regular() }
       menu.choice("Exit") { superExit() }
     end
@@ -166,15 +169,71 @@ class Menu
   def self.specialReport
     puts "\nWhich report would you like?"
     choose do |menu|
-      menu.choice("Worth By Console") { Report.worthByConsole() }
-      menu.choice("Worth By Series") { Report.worthBySeries() }
-      menu.choice("Worth By Developer") { Report.worthBySeries() }
-      menu.choice("Worth By Release Year") { Report.worthByReleaseYear() }
-      menu.choice("Worth By Italian Plumbers") { Ascii.mario() }
-      menu.choice("Back to Collection Menu") { showCollectionAgain() }
-      menu.choice("Back to Main Menu") { top() }
+      menu.choice("Worth of All Titles") { Report.allTitles() } #done
+      menu.choice("Worth By Specific Title") { worthBySpecificTitle() } #done
+      menu.choice("Worth By Platform") { worthByPlatformMenu() } #done
+      # menu.choice("Worth By Series") { Report.worthBySeries() }
+      menu.choice("Worth By Developer") { Report.worthByDeveloper() } #done
+      menu.choice("Worth By Publisher") { Report.worthByPublisher() } #done
+      menu.choice("Worth By Release Year") { Report.worthByReleaseYear() } #done
+      menu.choice("Total Money Gained/Lost") { Report.totalMoney() }
+      menu.choice("Worth By Italian Plumbers") { Ascii.mario2() } #done
+      menu.choice("Back to Collection Menu") { showCollectionAgain() } #done
+      menu.choice("Back to Main Menu") { top() } #done
       menu.choice("Exit") { superExit() }
     end
+  end
+
+  def self.worthBySpecificTitle
+    searchQuery = {}
+    searchQuery[:query] = ask("\nTitle? (Don't use any apostrophes!)", String)
+    Report.worthBySpecificTitle(searchQuery)
+  end
+
+  def self.specialReportMenu
+    puts "\nNow what would you like to do?"
+    choose do |menu|
+      menu.choice("Go Back To Special Reports") { specialReport() }
+      menu.choice("Go Back To See Your Collection") { Collection.showCollection() }
+      menu.choice("Go Back To Main Menu") { regular() }
+      menu.choice("Exit") { superExit() }
+    end
+  end
+
+  def self.worthByPlatformMenu
+    puts "\nConsole, Handheld, or Virtual Boy?"
+    choose do |menu|
+      menu.choice("Console"){ worthByPlatformConsole() }
+      menu.choice("Handheld"){ worthByPlatformHandheld() }
+      menu.choice("Virtual Boy"){ worthByPlatformVirtualBoy() }
+    end
+  end
+
+  def self.worthByPlatformConsole
+    puts "\nWhich one?"
+    choose do |menu|
+      menu.choices("NES", "SNES", "Nintendo 64", "Gamecube", "Wii", "Wii U") do |chosen|
+        searchQuery = {}
+        searchQuery[:query] = chosen
+        Report.worthByPlatform(searchQuery)
+      end
+    end
+  end
+
+  def self.worthByPlatformHandheld
+    puts "\nWhich one?"
+    choose do |menu|
+      menu.choices("Gameboy", "GBA", "DS", "3DS") do |chosen|
+        searchQuery = {}
+        searchQuery[:query] = chosen
+        Report.worthByPlatform(searchQuery)
+      end
+    end
+  end
+
+  def self.worthByPlatformVirtualBoy
+    searchQuery = {:query=>"Virtual Boy"}
+    Report.worthByPlatform(searchQuery)
   end
 
 # -----------------------------------------------[SUPER EXIT]----------------->

@@ -8,23 +8,71 @@ require_relative 'report'
 
 class Collection
 
-  def self.showCollection
-    Menu.showCollection()
-  end
-
-  def self.editCollection
-    Menu.editCollection()
-  end
-
   def self.deleteGame
-    #SQL code for searching and deleting items from a table.
-    puts "\nComing soon!"
-    Menu.regular()
+    searchQuery = {}
+    searchQuery[:query] = ask("\nWhich game would you like to delete? (No apostrophes!)", String)
+    database = Environment.database_connection
+    database.execute("delete from personalGames where title = '#{searchQuery[:query]}'")
+    puts "\n\s\s\s\sSuccessfully deleted #{searchQuery[:query]} from your Personal Games."
+    puts "\nNow what would you like to do?"
+    choose do |menu|
+      menu.choice("Delete Another Game") { deleteGame() }
+      menu.choice("Go Back To The Edit Menu") { Menu.editCollection() }
+      menu.choice("Go Back To Main Menu") { Menu.regular() }
+      menu.choice("Exit") { Menu.superExit() }
+    end
   end
 
   def self.editGame
-    #SQL code for searching end editing items from a table.
-    puts "\nComing soon!"
+    searchQuery = {}
+    searchQuery[:title] = ask("\nWhich game would you like to edit? (No apostrophes!)", String)
+    puts "\nWhich criteria would you like to edit?"
+    choose do |menu|
+      menu.choices("Title", "Platform", "Purchase Price") do |chosen|
+        searchQuery[:editCategory] = chosen
+      end
+    end
+    if searchQuery[:editCategory] == "Purchase Price"
+      searchQuery[:edit] = ask("\nEnter new purchase price.", Integer)
+    elsif searchQuery[:editCategory] == "Title"
+      searchQuery[:edit] = ask("\nEnter new title. (No apostrophes!)", String)
+    else
+      puts "\n"
+      choose do |menu|
+        menu.choices("Console", "Handheld", "Virtual Boy") do |chosen|
+          system = chosen
+          puts "\n"
+          if system == "Console"
+            puts "Which one?"
+            choose do |menu|
+              menu.choices("NES", "SNES", "Nintendo 64", "Gamecube", "Wii", "Wii U") do |chosen|
+                searchQuery[:edit] = chosen
+              end
+            end
+          elsif system == "Virtual Boy"
+            searchQuery[:edit] = chosen
+          else
+            puts "Which one?"
+            choose do |menu|
+              menu.choices("Gameboy", "Gameboy Color", "GBA", "DS", "3DS") do |chosen|
+                searchQuery[:edit] = chosen
+              end
+            end
+          end
+        end
+      end
+    end
+    database = Environment.database_connection
+    database.execute("update personalGames set #{searchQuery[:editCategory]} = '#{searchQuery[:edit]}' where title = '#{searchQuery[:title]}'")
+    puts "\n\s\s\s\sSuccessfully changed #{searchQuery[:editCategory]} to #{searchQuery[:edit]}!"
+    puts "\nNow what would you like to do?"
+    choose do |menu|
+      menu.choice("Edit Another Game") { editGame() }
+      menu.choice("Go Back To The Edit Menu") { Menu.editCollection() }
+      menu.choice("Go Back To Main Menu") { Menu.regular() }
+      menu.choice("Exit") { Menu.superExit() }
+    end
+    #UPDATE table_name SET column1=value1,column2=value2, ----- WHERE some_column=some_value;
     Menu.regular()
   end
 
@@ -33,41 +81,17 @@ class Collection
     games = database.execute('select * from personalGames order by title')
     puts "\n"
     games.each do |game|
-      puts "    #{game[1]} (#{game[2]}) for $#{game[3]}"
+      puts "\s\s\s\s#{game[1]} (#{game[2]})"
     end
     Menu.showCollectionAgain()
   end
 
-  def self.byPlatform platform
+  def self.byPlatform searchQuery
     database = Environment.database_connection
-    if platform == "NES"
-      games = database.execute('select * from personalGames where platform = "NES" order by title')
-    elsif platform == "SNES"
-      games = database.execute('select * from personalGames where platform = "SNES" order by title')
-    elsif platform == "Nintendo 64"
-      games = database.execute('select * from personalGames where platform = "Nintendo 64" order by title')
-    elsif platform == "Gamecube"
-      games = database.execute('select * from personalGames where platform = "Gamecube" order by title')
-    elsif platform == "Wii"
-      games = database.execute('select * from personalGames where platform = "Wii" order by title')
-    elsif platform == "Wii U"
-      games = database.execute('select * from personalGames where platform = "Wii U" order by title')
-    elsif platform == "Gameboy"
-      games = database.execute('select * from personalGames where platform = "Gameboy" order by title')
-    elsif platform == "Gameboy Color"
-      games = database.execute('select * from personalGames where platform = "Gameboy Color" order by title')
-    elsif platform == "GBA"
-      games = database.execute('select * from personalGames where platform = "GBA" order by title')
-    elsif platform == "DS"
-      games = database.execute('select * from personalGames where platform = "DS" order by title')
-    elsif platform == "3DS"
-      games = database.execute('select * from personalGames where platform = "3DS" order by title')
-    else
-      games = database.execute('select * from personalGames where platform = "Virtual Boy" order by title')
-    end
+    games = database.execute("select * from personalGames where platform = '#{searchQuery[:query]}' order by title")
     puts "\n"
     games.each do |game|
-      puts "    #{game[1]} (#{game[2]}) for $#{game[3]}"
+      puts "\s\s\s\s#{game[1]} (#{game[2]})"
     end
     Menu.showCollectionAgain()
   end
