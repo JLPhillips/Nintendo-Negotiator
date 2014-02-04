@@ -186,7 +186,30 @@ class Menu
 
   def self.worthBySpecificTitle
     searchQuery = {}
-    searchQuery[:query] = ask("\nTitle? (Don't use any apostrophes!)", String)
+    searchQuery[:title] = ask("\nTitle? (Don't use any apostrophes!)", String)
+    choose do |menu|
+      menu.choices("Console", "Handheld", "Virtual Boy") do |chosen|
+        system = chosen
+        puts "\n"
+        if system == "Console"
+          puts "Which one?"
+          choose do |menu|
+            menu.choices("NES", "SNES", "Nintendo 64", "Gamecube", "Wii", "Wii U") do |chosen|
+              searchQuery[:platform] = chosen
+            end
+          end
+        elsif system == "Virtual Boy"
+          searchQuery[:platform] = chosen
+        else
+          puts "Which one?"
+          choose do |menu|
+            menu.choices("Gameboy", "Gameboy Color", "GBA", "DS", "3DS") do |chosen|
+              searchQuery[:platform] = chosen
+            end
+          end
+        end
+      end
+    end
     Report.worthBySpecificTitle(searchQuery)
   end
 
@@ -194,7 +217,7 @@ class Menu
     puts "\nNow what would you like to do?"
     choose do |menu|
       menu.choice("Go Back To Special Reports") { specialReport() }
-      menu.choice("Go Back To See Your Collection") { Collection.showCollection() }
+      menu.choice("Go Back To See Your Collection") { showCollection() }
       menu.choice("Go Back To Main Menu") { regular() }
       menu.choice("Exit") { superExit() }
     end
@@ -235,6 +258,44 @@ class Menu
     searchQuery = {:query=>"Virtual Boy"}
     Report.worthByPlatform(searchQuery)
   end
+
+# -----------------------------------------------[Platform Select]----------------->
+
+  # def self.platformSelect
+  #   puts "\nConsole, Handheld, or Virtual Boy?"
+  #   choose do |menu|
+  #     menu.choice("Console"){ platformSelectConsole() }
+  #     menu.choice("Handheld"){ platformSelectHandheld() }
+  #     menu.choice("Virtual Boy"){ platformSelectVirtualBoy() }
+  #   end
+  # end
+
+  # def self.platformSelectConsole
+  #   puts "\nWhich one?"
+  #   choose do |menu|
+  #     menu.choices("NES", "SNES", "Nintendo 64", "Gamecube", "Wii", "Wii U") do |chosen|
+  #       searchQuery = {}
+  #       searchQuery[:platform] = chosen
+  #       return searchQuery
+  #     end
+  #   end
+  # end
+
+  # def self.platformSelectHandheld
+  #   puts "\nWhich one?"
+  #   choose do |menu|
+  #     menu.choices("Gameboy", "GBA", "DS", "3DS") do |chosen|
+  #       searchQuery = {}
+  #       searchQuery[:platform] = chosen
+  #       return searchQuery
+  #     end
+  #   end
+  # end
+
+  # def self.platformSelectVirtualBoy
+  #   searchQuery = {:platform=>"Virtual Boy"}
+  #   return searchQuery
+  # end
 
 # -----------------------------------------------[SUPER EXIT]----------------->
 

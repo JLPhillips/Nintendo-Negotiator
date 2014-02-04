@@ -71,12 +71,12 @@ class Report
 
   def self.worthBySpecificTitle searchQuery
     database = Environment.database_connection
-    games = database.execute("select * from personalGames pG inner join nintendoGames nG on pG.title = nG.title where pG.title = '#{searchQuery[:query]}'")
+    games = database.execute("select * from personalGames pG inner join nintendoGames nG on pG.title = nG.title where pG.title = '#{searchQuery[:title]}' and pG.platform = '#{searchQuery[:platform]}'")
     if games.length < 1
       puts "\n\s\s\sYou have not entered this game."
     else
       games.each do |game|
-        puts "\n\s\s\s\s#{game[1]} (#{game[2]}) worth $#{game[10]} (paid $#{game[3]})"
+        puts "\s\s\s\s#{game[1]} (#{game[2]}) worth $#{game[10]} (paid $#{game[3]})"
       end
     end
     Menu.specialReportMenu()
@@ -171,7 +171,7 @@ class Report
     games = database.execute("select * from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where releaseYear = '#{searchQuery[:query]}' order by platform, title")
     puts "\n"
     games.each do |game|
-      puts "    #{game[1]} (#{game[2]}) worth $#{game[10]} (paid $#{game[3]})"
+      puts "\s\s\s\s#{game[1]} (#{game[2]}) worth $#{game[10]} (paid $#{game[3]})"
     end
     Menu.specialReportMenu()
   end
