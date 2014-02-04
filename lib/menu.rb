@@ -177,6 +177,7 @@ class Menu
       menu.choice("Worth By Developer") { Report.worthByDeveloper() } #done
       menu.choice("Worth By Publisher") { Report.worthByPublisher() } #done
       menu.choice("Worth By Release Year") { Report.worthByReleaseYear() } #done
+      menu.choice("Series With Highest Retained Value") { Report.highestValueSeries() }
       menu.choice("Total Money Gained/Lost") { Report.totalMoney() } #done
       # menu.choice("Worth By Italian Plumbers") { Ascii.mario2() } #done
       menu.choice("Back to Collection Menu") { showCollectionAgain() } #done

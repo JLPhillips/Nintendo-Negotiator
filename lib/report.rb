@@ -307,4 +307,22 @@ class Report
       menu.choice("Exit") { Menu.superExit() }
     end
   end
+
+  def self.highestValueSeries
+    searchQuery = {}
+    database = Environment.database_connection
+    series = database.execute("select series, avg(originalPrice - ebayPrice) from personalGames inner join nintendoGames on nintendoGames.title = personalGames.title order by series")
+    series.each do |series|
+      puts "\n\s\s\s\sThe series with the highest retained value\n\s\s\s\sin your collection is the #{series[0]} series."
+      searchQuery[:series] = series[0]
+    end
+    puts "\nNow what would you like to do?"
+    choose do |menu|
+      menu.choice("See The Individual Titles In This Series.") { worthBySeriesSpecific(searchQuery) }
+      menu.choice("Go Back To Special Reports") { Menu.specialReport() }
+      menu.choice("Go Back To See Your Collection") { Collection.showCollection() }
+      menu.choice("Go Back To Main Menu") { Menu.regular() }
+      menu.choice("Exit") { Menu.superExit() }
+    end
+  end
 end
