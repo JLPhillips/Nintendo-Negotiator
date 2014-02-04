@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'highline/import'
+require 'sqlite3'
 require_relative 'personalGame'
 require_relative 'collection'
 require_relative 'report'
@@ -25,7 +26,7 @@ class Menu
   end
 
   def self.done
-    puts "\n\nNow, what would you like to do?"
+    puts "\nNow, what would you like to do?"
     choose do |menu|
       menu.choice("Add a Game") { personalGame() }
       menu.choice("See Your Collection") { showCollection() }

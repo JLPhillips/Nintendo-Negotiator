@@ -40,7 +40,7 @@ class Collection
     if game.length == 1
       database.execute("delete from personalGames where title = '#{searchQuery[:title]}' and platform = '#{searchQuery[:platform]}'")
       game.each do |section|
-        puts "\n\s\s\s\sSuccessfully deleted #{searchQuery[:title]} (#{section[2]}) from your Personal Games."
+        puts "\n\s\s\s\sSuccessfully deleted #{searchQuery[:title]} (#{section[2]}) from your collection."
       end
     else
       puts "\n\s\s\s\sYou have not entered this game."
