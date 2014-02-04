@@ -178,7 +178,7 @@ class Menu
       menu.choice("Worth By Publisher") { Report.worthByPublisher() } #done
       menu.choice("Worth By Release Year") { Report.worthByReleaseYear() } #done
       menu.choice("Total Money Gained/Lost") { Report.totalMoney() } #done
-      menu.choice("Worth By Italian Plumbers") { Ascii.mario2() } #done
+      # menu.choice("Worth By Italian Plumbers") { Ascii.mario2() } #done
       menu.choice("Back to Collection Menu") { showCollectionAgain() } #done
       menu.choice("Back to Main Menu") { top() } #done
       menu.choice("Exit") { superExit() }

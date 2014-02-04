@@ -8,8 +8,24 @@ class Report
   def self.allTitles
     database = Environment.database_connection
     sum = database.execute("select sum(ebayPrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title")
-    ssum = sum.join("")
-    puts "\n\s\s\s\sYour collection of games is worth $#{ssum}!"
+    ebaySum = sum.join("").to_i
+    if ebaySum <= 0
+      puts "\n\s\s\s\sYou haven't entered any games."
+      puts Menu.specialReportMenu()
+    else
+      purchaseSum = database.execute("select sum(purchasePrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title")
+      purchaseSum = purchaseSum.join("").to_i
+      totalSum = ebaySum - purchaseSum
+      puts "\n\s\s\s\sYour collection is worth $#{ebaySum}!"
+      puts "\n\s\s\s\sYou paid $#{purchaseSum}."
+      if totalSum <= 0
+        puts "\n\s\s\s\sI would hang on to those."
+      elsif totalSum > 0
+        puts "\n\s\s\s\sSell! SELL!!"
+      else
+        puts "Error."
+      end
+    end
     puts "\nNow what would you like to do?"
     choose do |menu|
       menu.choice("See Individual Worth of All Titles") { allTitlesSpecific() }
@@ -37,21 +53,31 @@ class Report
   def self.worthByPlatform searchQuery
     database = Environment.database_connection
     sum = database.execute("select sum(ebayPrice) from personalGames pG inner join nintendoGames nG on pG.title = nG.title where pG.platform = '#{searchQuery[:query]}'")
-    ssum = sum.join("")
-    tsum = ssum.to_i
-    if tsum < 1
-      puts "\n\s\s\s\sYou have not entered any games for the #{searchQuery[:query]}."
-      Menu.specialReportMenu()
+    ebaySum = sum.join("").to_i
+    if ebaySum <= 0
+      puts "\n\s\s\s\sYou haven't entered any games for this platform."
+      puts Menu.specialReportMenu()
     else
-      puts "\n\s\s\s\sYour collection of games (released for the #{searchQuery[:query]}) platform is worth $#{ssum}!"
-      puts "\nNow what would you like to do?"
-      choose do |menu|
-        menu.choice("See Specific Games For This Platform") { specificGamesOnPlatform(searchQuery) }
-        menu.choice("Go Back To Special Reports") { Menu.specialReport() }
-        menu.choice("Go Back To See Your Collection Menu") { Collection.showCollection() }
-        menu.choice("Go Back To Main Menu") { Menu.regular() }
-        menu.choice("Exit") { Menu.superExit() }
+      purchaseSum = database.execute("select sum(purchasePrice) from personalGames pG inner join nintendoGames nG on pG.title = nG.title where pG.platform = '#{searchQuery[:query]}'")
+      purchaseSum = purchaseSum.join("").to_i
+      totalSum = ebaySum - purchaseSum
+      puts "\n\s\s\s\sYour collection of games for the #{searchQuery[:query]} is worth $#{ebaySum}!"
+      puts "\n\s\s\s\sYou paid $#{purchaseSum}."
+      if totalSum <= 0
+        puts "\n\s\s\s\sI would hang on to those."
+      elsif totalSum > 0
+        puts "\n\s\s\s\sSell! SELL!!"
+      else
+        puts "Error."
       end
+    end
+    puts "\nNow what would you like to do?"
+    choose do |menu|
+      menu.choice("See Specific Games For This Platform") { specificGamesOnPlatform(searchQuery) }
+      menu.choice("Go Back To Special Reports") { Menu.specialReport() }
+      menu.choice("Go Back To See Your Collection Menu") { Collection.showCollection() }
+      menu.choice("Go Back To Main Menu") { Menu.regular() }
+      menu.choice("Exit") { Menu.superExit() }
     end
   end
 
@@ -87,12 +113,23 @@ class Report
     searchQuery[:series] = ask("\nWhich game series?", String)
     database = Environment.database_connection
     sum = database.execute("select sum(ebayPrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where series = '#{searchQuery[:series]}'")
-    ssum = sum.join("").to_i
-    if ssum < 1
-      puts "\nYou have not entered any games in this series."
-      Menu.specialReportMenu()
+    ebaySum = sum.join("").to_i
+    if ebaySum <= 0
+      puts "\n\s\s\s\sYou haven't entered any games in this series."
+      puts Menu.specialReportMenu()
     else
-      puts "\n\s\s\s\sYour collection of games in the #{searchQuery[:series]}) series is worth $#{ssum}!"
+      purchaseSum = database.execute("select sum(purchasePrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where series = '#{searchQuery[:series]}'")
+      purchaseSum = purchaseSum.join("").to_i
+      totalSum = ebaySum - purchaseSum
+      puts "\n\s\s\s\sYour collection of games in the #{searchQuery[:query]} series is worth $#{ebaySum}!"
+      puts "\n\s\s\s\sYou paid $#{purchaseSum}."
+      if totalSum <= 0
+        puts "\n\s\s\s\sI would hang on to those."
+      elsif totalSum > 0
+        puts "\n\s\s\s\sSell! SELL!!"
+      else
+        puts "Error."
+      end
     end
     puts "\nNow what would you like to do?"
     choose do |menu|
@@ -123,12 +160,23 @@ class Report
     searchQuery[:query] = ask("\nWhich developer?", String)
     database = Environment.database_connection
     sum = database.execute("select sum(ebayPrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where developer like '%#{searchQuery[:query]}%'")
-    ssum = sum.join("").to_i
-    if ssum < 1
-      puts "\nYou have not entered any games by this developer."
-      Menu.specialReportMenu()
+    ebaySum = sum.join("").to_i
+    if ebaySum <= 0
+      puts "\n\s\s\s\sYou haven't entered any games from this developer."
+      puts Menu.specialReportMenu()
     else
-      puts "\n\s\s\s\sYour collection of games (developed by #{searchQuery[:query]}) is worth $#{ssum}!"
+      purchaseSum = database.execute("select sum(purchasePrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where developer like '%#{searchQuery[:query]}%'")
+      purchaseSum = purchaseSum.join("").to_i
+      totalSum = ebaySum - purchaseSum
+      puts "\n\s\s\s\sYour collection of games developed by #{searchQuery[:query]} is worth $#{ebaySum}!"
+      puts "\n\s\s\s\sYou paid $#{purchaseSum}."
+      if totalSum <= 0
+        puts "\n\s\s\s\sI would hang on to those."
+      elsif totalSum > 0
+        puts "\n\s\s\s\sSell! SELL!!"
+      else
+        puts "Error."
+      end
     end
     puts "\nNow what would you like to do?"
     choose do |menu|
@@ -155,12 +203,23 @@ class Report
     searchQuery[:query] = ask("\nWhich publisher?", String)
     database = Environment.database_connection
     sum = database.execute("select sum(ebayPrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where publisher like '%#{searchQuery[:query]}%'")
-    ssum = sum.join("").to_i
-    if ssum < 1
-      puts "\nYou have not entered any games by this publisher."
-      Menu.specialReportMenu()
+    ebaySum = sum.join("").to_i
+    if ebaySum <= 0
+      puts "\n\s\s\s\sYou haven't entered any games from this publisher."
+      puts Menu.specialReportMenu()
     else
-      puts "\n\s\s\s\sYour collection of games (published by #{searchQuery[:query]}) is worth $#{ssum}!"
+      purchaseSum = database.execute("select sum(purchasePrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where publisher like '%#{searchQuery[:query]}%'")
+      purchaseSum = purchaseSum.join("").to_i
+      totalSum = ebaySum - purchaseSum
+      puts "\n\s\s\s\sYour collection of games published by #{searchQuery[:query]} is worth $#{ebaySum}!"
+      puts "\n\s\s\s\sYou paid $#{purchaseSum}."
+      if totalSum <= 0
+        puts "\n\s\s\s\sI would hang on to those."
+      elsif totalSum > 0
+        puts "\n\s\s\s\sSell! SELL!!"
+      else
+        puts "Error."
+      end
     end
     puts "\nNow what would you like to do?"
     choose do |menu|
@@ -187,8 +246,26 @@ class Report
     searchQuery[:query] = ask("\nWhich release year?", String)
     database = Environment.database_connection
     sum = database.execute("select sum(ebayPrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where releaseYear = '#{searchQuery[:query]}'")
-    ssum = sum.join("")
-    puts "\n\s\s\s\sYour collection of games (released in #{searchQuery[:query]}) is worth $#{ssum}!"
+    ssum = sum.join("").to_i
+    if ssum <= 0
+      puts "\n\s\s\s\sYou haven't entered any games from this year."
+      puts Menu.specialReportMenu()
+    else
+      ebaySum = database.execute("select sum(ebayPrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where nintendoGames.releaseYear = '#{searchQuery[:query]}'")
+      ebaySum = ebaySum.join("").to_i
+      purchaseSum = database.execute("select sum(purchasePrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where nintendoGames.releaseYear = '#{searchQuery[:query]}'")
+      purchaseSum = purchaseSum.join("").to_i
+      totalSum = ebaySum - purchaseSum
+      puts "\n\s\s\s\sYour collection of games released in #{searchQuery[:query]} is worth $#{ssum}!"
+      puts "\n\s\s\s\sYou paid $#{purchaseSum}."
+      if totalSum <= 0
+        puts "\n\s\s\s\sI would hang on to those."
+      elsif totalSum > 0
+        puts "\n\s\s\s\sSell! SELL!!"
+      else
+        puts "Error."
+      end
+    end
     puts "\nNow what would you like to do?"
     choose do |menu|
       menu.choice("See Specific Games In This Year") { specificGamesInYear(searchQuery) }
@@ -217,6 +294,11 @@ class Report
     purchaseSum = purchaseSum.join("").to_i
     totalSum = ebaySum - purchaseSum
     puts "\n\s\s\s\sYour collection's net worth is $#{totalSum}!"
+    if totalSum < 0
+      puts "\n\s\s\s\sOuch."
+    else
+      puts "\n\s\s\s\sYou're loaded!"
+    end
     puts "\nNow what would you like to do?"
     choose do |menu|
       menu.choice("Go Back To Special Reports") { Menu.specialReport() }

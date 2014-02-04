@@ -1,5 +1,6 @@
 require 'highline/import'
 require_relative "menu"
+require_relative "easteregg"
 
 class Ascii
   def self.mario
@@ -129,6 +130,7 @@ class Ascii
     choose do |menu|
       menu.choice("Go Back To Main Menu") { Menu.regular() }
       menu.choice("Exit") { Menu.superExit() }
+      menu.choice("?") { EasterEgg.secretMain() }
     end
   end
 
