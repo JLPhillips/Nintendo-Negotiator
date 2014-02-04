@@ -22,7 +22,7 @@ class Report
 
   def self.allTitlesSpecific
     database = Environment.database_connection
-    games = database.execute("select * from personalGames pG inner join nintendoGames nG on pG.title = nG.title order by platform, title")
+    games = database.execute("select * from personalGames pG inner join nintendoGames nG on pG.title = nG.title where pG.platform = nG.platform order by title")
     puts "\n"
     if games.length < 1
       puts "\s\s\s\sYou have no games entered."
@@ -83,6 +83,39 @@ class Report
   end
 
   def self.worthBySeries
+    searchQuery = {}
+    searchQuery[:series] = ask("\nWhich game series?", String)
+    database = Environment.database_connection
+    sum = database.execute("select sum(ebayPrice) from personalGames inner join nintendoGames on personalGames.title = nintendoGames.title where series = '#{searchQuery[:series]}'")
+    ssum = sum.join("").to_i
+    if ssum < 1
+      puts "\nYou have not entered any games in this series."
+      Menu.specialReportMenu()
+    else
+      puts "\n\s\s\s\sYour collection of games in the #{searchQuery[:series]}) series is worth $#{ssum}!"
+    end
+    puts "\nNow what would you like to do?"
+    choose do |menu|
+      menu.choice("See Specific Games In This Series") { worthBySeriesSpecific(searchQuery) }
+      menu.choice("Go Back To Special Reports") { Menu.specialReport() }
+      menu.choice("Go Back To See Your Collection") { Collection.showCollection() }
+      menu.choice("Go Back To Main Menu") { Menu.regular() }
+      menu.choice("Exit") { Menu.superExit() }
+    end
+  end
+
+  def self.worthBySeriesSpecific searchQuery
+    database = Environment.database_connection
+    games = database.execute("select * from personalGames pG inner join nintendoGames nG on pG.title = nG.title where nG.series = '#{searchQuery[:series]}'")
+    if games.length < 1
+      puts "\n\s\s\sYou have not entered any games in this series."
+    else
+      puts "\n"
+      games.each do |game|
+        puts "\s\s\s\s#{game[1]} (#{game[2]}) worth $#{game[10]} (paid $#{game[3]})"
+      end
+    end
+    Menu.specialReportMenu()
   end
 
   def self.worthByDeveloper

@@ -173,11 +173,11 @@ class Menu
       menu.choice("Worth of All Titles") { Report.allTitles() } #done
       menu.choice("Worth By Specific Title") { worthBySpecificTitle() } #done
       menu.choice("Worth By Platform") { worthByPlatformMenu() } #done
-      # menu.choice("Worth By Series") { Report.worthBySeries() }
+      menu.choice("Worth By Series") { Report.worthBySeries() } #done
       menu.choice("Worth By Developer") { Report.worthByDeveloper() } #done
       menu.choice("Worth By Publisher") { Report.worthByPublisher() } #done
       menu.choice("Worth By Release Year") { Report.worthByReleaseYear() } #done
-      menu.choice("Total Money Gained/Lost") { Report.totalMoney() }
+      menu.choice("Total Money Gained/Lost") { Report.totalMoney() } #done
       menu.choice("Worth By Italian Plumbers") { Ascii.mario2() } #done
       menu.choice("Back to Collection Menu") { showCollectionAgain() } #done
       menu.choice("Back to Main Menu") { top() } #done
